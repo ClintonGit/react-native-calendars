@@ -10,6 +10,75 @@ import {
   CHANGE_MONTH_RIGHT_ARROW
 } from '../../testIDs';
 
+
+const Realm = require("realm");
+
+const lang = {
+  name: "lang",
+  properties: {
+    l_id: "int",
+    l_name: "string"
+  }
+};
+
+const note = {
+  name: "note",
+  properties: {
+    id: "int",
+    title: "string",
+    type: "int",
+    date: "string"
+  }
+};
+
+const favorite = {
+  name: "favorite",
+  properties: {
+    id: "int",
+    date: "string"
+  }
+};
+
+const activity = {
+  name: "activity",
+  properties: {
+    date: "string"
+  }
+};
+
+const icon = {
+  name: "icon",
+  properties: {
+    date: "string",
+    image: "string"
+  }
+};
+
+const userNote = {
+  name: "userNote",
+  properties: {
+    code: "string",
+    title: "string",
+    detail: "string",
+    type: "int",
+    typedate: "int",
+    place: "string",
+    time_h: "string",
+    time_m: "string",
+    time_type: "string",
+    typecon: "int",
+    date: "string",
+    color: "string"
+  }
+};
+
+Realm.open({ schema: [lang, note, favorite, activity, icon, userNote] });
+
+let realm = new Realm({
+  schema: [lang, note, favorite, activity, icon, userNote]
+});
+
+
 class CalendarHeader extends Component {
   static propTypes = {
     theme: PropTypes.object,
@@ -115,6 +184,21 @@ class CalendarHeader extends Component {
       );
     }
     let indicator;
+    let month_show = this.props.month.toString(this.props.monthFormat);
+    let month_convert = month_show.split(" ");
+    console.warn(month_convert);
+
+    let lang = realm.objects("lang");
+    let lang_id = lang[0].l_id;
+    let year_set = 0;
+    if(lang_id == 1){
+      year_set = 543;
+    }else{
+      year_set = 0;
+    }
+
+    let month_new = month_convert[0]+" "+(parseInt(month_convert[1])+parseInt(year_set));
+    //alert(month_new);
     if (this.props.showIndicator) {
       indicator = <ActivityIndicator />;
     }
@@ -124,7 +208,7 @@ class CalendarHeader extends Component {
           {leftArrow}
           <View style={{ flexDirection: 'row' }}>
             <Text allowFontScaling={false} style={this.style.monthText} accessibilityTraits='header'>
-              {this.props.month.toString(this.props.monthFormat)}
+              {month_new}
             </Text>
             {indicator}
           </View>
